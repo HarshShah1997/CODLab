@@ -45,7 +45,8 @@ void compute_followpos(Node *tree, map< int, set<int> > &followpos);
 void find_for_star(Node *tree, map< int, set<int> > &followpos);
 void find_for_cat(Node *tree, map< int, set<int> > &followpos);
 void print_map(map<int, set<int> > &fp);
-map< set<int>, vector< set<int> > > create_dfa(Node *tree, vector< set<int> > &positions, map< int, set<int> > &followpos, vector<char> &symbols);
+map< set<int>, vector< set<int> > > create_dfa(Node *tree, vector< set<int> > &positions, 
+        map< int, set<int> > &followpos, vector<char> &symbols);
 vector< set<int> > find_positions(Node *tree, vector<char> &symbols);
 void find_pos_symbol(Node *tree, char symbol, set<int> &symbol_position);
 void print_vector(vector< set<int> > &v, vector<char> &symbols);
@@ -203,7 +204,8 @@ void compute_followpos(Node *tree, map< int, set<int> > &followpos)
     }
 }
 
-map< set<int>, vector< set<int> > > create_dfa(Node *tree, vector< set<int> > &positions, map< int, set<int> > &followpos, vector<char> &symbols)
+map< set<int>, vector< set<int> > > create_dfa(Node *tree, vector< set<int> > &positions, 
+        map< int, set<int> > &followpos, vector<char> &symbols)
 {
     map< set<int>, vector< set<int> > > dfa;
     queue< set<int> > undiscovered;
@@ -329,8 +331,7 @@ void union_lastpos(Node *tree)
 
 Node *create_tree(string regex, map< int, set<int> > &followpos) 
 {
-    /*Convert regex to postfix*/
-    /*Assuming it is postfix for now*/
+    /*Regex must be in postfix*/
     stack<Node*> s;
     int position = 1;
     for (int i = 0; i < regex.length(); i++) {
