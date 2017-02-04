@@ -52,11 +52,15 @@ void print_vector(vector< set<int> > &v, vector<char> &symbols);
 set<int> union_all(set<int> intersected, map< int, set<int> > &followpos);
 void print_dfa(map< set<int>, vector< set<int> > > &dfa, vector<char> &symbols);
 vector<char> find_symbols(string input);
+string to_postfix(string input);
 
 int main()
 {
     string input;
     cin >> input;
+
+    input = to_postfix(input);
+    cout << "Postfix: " << input << endl;
 
     map< int, set<int> > followpos;
 
@@ -82,6 +86,42 @@ int main()
     print_dfa(dfa, symbols);
 
     return 0;
+}
+
+string to_postfix(string input)
+{
+    string ans = "";
+    stack<char> s;
+
+    for (int i = 0; i < input.length(); i++) {
+        if (input[i] == '.' || input[i] == '|' || input[i] == '*') {
+            if (!s.empty()) {
+                ans += s.top();
+                s.pop();
+            }
+            s.push(input[i]);
+        } else if (input[i] == ')') {
+            if (!s.empty()) {
+                ans += s.top();
+                s.pop();
+            }
+        } else if (input[i] != '(') {
+            if (i != 0 && input[i - 1] != '|' && input[i-1] != '(') {
+                if (!s.empty()) {
+                    ans += s.top();
+                    s.pop();
+                }
+                s.push('.');
+            }
+            ans += input[i];
+        }
+    }
+    if (!s.empty()) {
+        ans += s.top();
+        s.pop();
+    }
+
+    return ans;
 }
 
 void compute_nullable(Node *tree)
