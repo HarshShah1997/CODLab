@@ -13,14 +13,17 @@ bool is_identifier(char ch);
 
 string s;
 int i = 0;
+ofstream myfile;
 
 int main()
 {
+    myfile.open("tokens.txt");
     getline(cin, s);
     Token ans = scanner();
     while (ans.type != "$") {
         ans = scanner();
     }
+    myfile.close();
     return 0;
 }
 
@@ -58,7 +61,7 @@ Token scanner()
             }
         }
     }
-    cout << ans.type << " " << ans.value << endl;
+    myfile << ans.type << " " << ans.value << endl;
     return ans;
 }
 

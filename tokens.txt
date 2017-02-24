@@ -1,0 +1,6 @@
+id c
+assign
+id a
+plus 
+inum 3
+$ 
