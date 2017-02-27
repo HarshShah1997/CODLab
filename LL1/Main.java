@@ -62,12 +62,12 @@ class Main {
     }
 
     void displayFirst() {
+        System.out.println("");
+        System.out.println("FIRST");
         for (NonTerminal nt : grammer) {
             System.out.println(nt.name + " " + first.get(nt));
         }
     }
-
-
 
     void getInputFromFile(String filename) {
         try {
