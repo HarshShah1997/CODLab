@@ -1,0 +1,9 @@
+A -> BD
+B -> CwB
+  | epsilon
+D -> vE
+E -> xBE
+  | epsilon
+C -> tF
+F -> u
+  | epsilon
