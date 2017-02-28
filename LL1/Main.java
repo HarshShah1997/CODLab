@@ -9,12 +9,15 @@ class Main {
     HashMap<NonTerminal, Set<String>> first = new HashMap<NonTerminal, Set<String>>();
     HashMap<NonTerminal, Set<String>> follow = new HashMap<NonTerminal, Set<String>>();
 
+    ArrayList<Pair<NonTerminal, NonTerminal>> toProcess = new ArrayList<Pair<NonTerminal, NonTerminal>>();
+
     void run() {
         getInputFromFile("grammer.txt");
         calculateFirst();
         displayFirst();
 
         calculateFollow();
+        displayFollow();
     }
 
     
@@ -78,30 +81,61 @@ class Main {
         end.add("$");
         follow.put(grammer.get(0), end);
         for (NonTerminal nt : grammer) {
-            for (ArrayList<String> production : nt.productions) {
-                calculateFollow(production);
+            for (String production : nt.productions) {
+                calculateFollow(nt, production);
             }
         }
+
+        for (int i = 0; i < toProcess.size(); i++) {
+            NonTerminal to = toProcess.get(i).first;
+            NonTerminal from = toProcess.get(i).second;
+
+            Set<String> combined = follow.get(to);
+            combined.addAll(follow.get(from));
+            follow.put(to, combined);
+        }
+
     }
 
-    void calculateFollow(String production) {
+    void calculateFollow(NonTerminal parentNt, String production) {
         for (int i = 0; i < production.length(); i++) {
             char symbol = production.charAt(i);
             if (!isTerminal(symbol)) {
                 String rem = production.substring(i+1);
                 Set<String> currFollow = calculateFirst(rem);
-                NonTerminal currNonTerminal = strToNonTerminal.get(symbol);
+                NonTerminal currNonTerminal = strToNonTerminal.get("" + symbol);
 
-                if (follow.get(currNonTerminal) 
+                boolean nullable = false;
 
+                if (currFollow.contains("epsilon")) {
+                    nullable = true;
+                    currFollow.remove("epsilon");
+                }
 
-
+                if (follow.get(currNonTerminal) == null) {
+                   follow.put(currNonTerminal, currFollow);
+                } else {
+                   Set<String> combined = follow.get(currNonTerminal);
+                   combined.addAll(currFollow);
+                   follow.put(currNonTerminal, combined);
+                }
+                if (nullable) {
+                    toProcess.add(new Pair<NonTerminal, NonTerminal>(currNonTerminal, parentNt));
+                }
             }
         }
     }
 
+    void displayFollow() {
+        System.out.println("");
+        System.out.println("FOLLOW");
+        for (NonTerminal nt : grammer) {
+            System.out.println(nt.name + " " + follow.get(nt));
+        }
+    }
+
     boolean isTerminal(char symbol) {
-        if (symbol <= 'A' || symbol >= 'Z') {
+        if (symbol < 'A' || symbol > 'Z') {
             return true;
         } else {
             return false;

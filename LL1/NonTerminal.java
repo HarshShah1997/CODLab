@@ -11,7 +11,7 @@ class NonTerminal {
     }
 
     public String toString() {
-        String output = name + " -> ";
+        /*String output = name + " -> ";
         for (String production : productions) {
             output += production + " | ";
         }
@@ -19,6 +19,8 @@ class NonTerminal {
             output += "epsilon";
         }
         return output;
+        */
+        return name;
     }
 }
 
