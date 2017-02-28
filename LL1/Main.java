@@ -14,6 +14,9 @@ class Main {
     HashMap<NonTerminal, Set<String>> follow = 
         new HashMap<NonTerminal, Set<String>>();
 
+    HashMap<Pair<NonTerminal, String>, Set<String>> firstplus =
+        new HashMap<Pair<NonTerminal, String>, Set<String>>();
+
     void run() {
         getInputFromFile("grammer.txt");
         calculateFirst();
@@ -21,8 +24,10 @@ class Main {
 
         calculateFollow();
         displayFollow();
-    }
 
+        calculateFirstplus();
+        displayFirstplus();
+    }
 
     void calculateFirst() {
         for (NonTerminal nt : grammer) {
@@ -96,33 +101,33 @@ class Main {
     ArrayList<Pair<NonTerminal, NonTerminal>> 
         calculateFollow(NonTerminal parentNt, String production) {
 
-        ArrayList<Pair<NonTerminal, NonTerminal>> toProcess 
-            = new ArrayList<Pair<NonTerminal, NonTerminal>>();
+            ArrayList<Pair<NonTerminal, NonTerminal>> toProcess 
+                = new ArrayList<Pair<NonTerminal, NonTerminal>>();
 
-        for (int i = 0; i < production.length(); i++) {
-            char symbol = production.charAt(i);
-            if (!isTerminal(symbol)) {
-                String rem = production.substring(i+1);
-                Set<String> currFollow = calculateFirst(rem);
-                NonTerminal currNonTerminal = strToNonTerminal.get("" + symbol);
+            for (int i = 0; i < production.length(); i++) {
+                char symbol = production.charAt(i);
+                if (!isTerminal(symbol)) {
+                    String rem = production.substring(i+1);
+                    Set<String> currFollow = calculateFirst(rem);
+                    NonTerminal currNonTerminal = strToNonTerminal.get("" + symbol);
 
-                boolean nullable = false;
+                    boolean nullable = false;
 
-                if (currFollow.contains("epsilon")) {
-                    nullable = true;
-                    currFollow.remove("epsilon");
-                }
+                    if (currFollow.contains("epsilon")) {
+                        nullable = true;
+                        currFollow.remove("epsilon");
+                    }
 
-                addToFollow(currNonTerminal, currFollow);
+                    addToFollow(currNonTerminal, currFollow);
 
-                if (nullable) {
-                    toProcess.add(new Pair<NonTerminal, NonTerminal>
-                            (currNonTerminal, parentNt));
+                    if (nullable) {
+                        toProcess.add(new Pair<NonTerminal, NonTerminal>
+                                (currNonTerminal, parentNt));
+                    }
                 }
             }
+            return toProcess;
         }
-        return toProcess;
-    }
 
     /* Add current follow to the follow of current Non Terminal */
     void addToFollow(NonTerminal currNonTerminal, Set<String> currFollow) {
@@ -152,6 +157,55 @@ class Main {
         System.out.println("FOLLOW");
         for (NonTerminal nt : grammer) {
             System.out.println(nt.name + " " + follow.get(nt));
+        }
+    }
+
+    void calculateFirstplus() {
+        for (NonTerminal nt : grammer) {
+            calculateFirstplus(nt);
+        }
+    }
+
+    void calculateFirstplus(NonTerminal nt) {
+        for (String production : nt.productions) {
+            calculateFirstplus(nt, production);
+        }
+        if (nt.nullable) {
+            Pair<NonTerminal, String> key = 
+                new Pair<NonTerminal, String>(nt, "epsilon");
+            firstplus.put(key, follow.get(nt));
+        }
+    }
+
+    void calculateFirstplus(NonTerminal nt, String production) {
+        Set<String> currFirst = calculateFirst(production);
+        Pair<NonTerminal, String> key = 
+            new Pair<NonTerminal, String>(nt, production);
+
+        if (currFirst.contains("epsilon")) {
+            currFirst.remove("epsilon");
+            currFirst.addAll(follow.get(nt));
+        }
+        firstplus.put(key, currFirst);
+    }
+
+    void displayFirstplus() {
+        System.out.println("");
+        System.out.println("FIRST PLUS");
+        for (NonTerminal nt : grammer) {
+            for (String production : nt.productions) {
+                Pair<NonTerminal, String> key = 
+                    new Pair<NonTerminal, String>(nt, production);
+
+                System.out.println(nt.name + " -> " + production + " " +
+                        firstplus.get(key));
+            }
+            if (nt.nullable) {
+                Pair<NonTerminal, String> key = 
+                    new Pair<NonTerminal, String>(nt, "epsilon");
+                System.out.println(nt.name + " -> epsilon " + 
+                        firstplus.get(key));
+            }
         }
     }
 

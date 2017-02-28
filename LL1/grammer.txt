@@ -1,8 +1,9 @@
-S -> UVW
-U -> (S)
-  |  aSb
-  |  d
-V -> aV
+A -> BD
+B -> CwB
   |  epsilon
-W -> cW
+D -> vE
+E -> xBE
+  |  epsilon
+C -> tF
+F -> u
   |  epsilon
