@@ -7,13 +7,17 @@ class Main {
     HashMap<String, NonTerminal> strToNonTerminal = new HashMap<String, NonTerminal>();
 
     HashMap<NonTerminal, Set<String>> first = new HashMap<NonTerminal, Set<String>>();
+    HashMap<NonTerminal, Set<String>> follow = new HashMap<NonTerminal, Set<String>>();
 
     void run() {
         getInputFromFile("grammer.txt");
         calculateFirst();
         displayFirst();
+
+        calculateFollow();
     }
 
+    
     void calculateFirst() {
         for (NonTerminal nt : grammer) {
             calculateFirst(nt);
@@ -41,7 +45,7 @@ class Main {
         for (i = 0; i < production.length(); i++) {
             char currSymbol = production.charAt(i);
 
-            if (currSymbol <= 'A' || currSymbol >= 'Z') {
+            if (isTerminal(currSymbol)) {
                 currFirst.add("" + currSymbol);
                 break;
             } else {
@@ -66,6 +70,41 @@ class Main {
         System.out.println("FIRST");
         for (NonTerminal nt : grammer) {
             System.out.println(nt.name + " " + first.get(nt));
+        }
+    }
+
+    void calculateFollow() {
+        Set<String> end = new HashSet<String>();
+        end.add("$");
+        follow.put(grammer.get(0), end);
+        for (NonTerminal nt : grammer) {
+            for (ArrayList<String> production : nt.productions) {
+                calculateFollow(production);
+            }
+        }
+    }
+
+    void calculateFollow(String production) {
+        for (int i = 0; i < production.length(); i++) {
+            char symbol = production.charAt(i);
+            if (!isTerminal(symbol)) {
+                String rem = production.substring(i+1);
+                Set<String> currFollow = calculateFirst(rem);
+                NonTerminal currNonTerminal = strToNonTerminal.get(symbol);
+
+                if (follow.get(currNonTerminal) 
+
+
+
+            }
+        }
+    }
+
+    boolean isTerminal(char symbol) {
+        if (symbol <= 'A' || symbol >= 'Z') {
+            return true;
+        } else {
+            return false;
         }
     }
 
