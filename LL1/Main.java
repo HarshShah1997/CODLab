@@ -4,12 +4,15 @@ import java.util.*;
 class Main {
 
     ArrayList<NonTerminal> grammer = new ArrayList<NonTerminal>();
-    HashMap<String, NonTerminal> strToNonTerminal = new HashMap<String, NonTerminal>();
 
-    HashMap<NonTerminal, Set<String>> first = new HashMap<NonTerminal, Set<String>>();
-    HashMap<NonTerminal, Set<String>> follow = new HashMap<NonTerminal, Set<String>>();
+    HashMap<String, NonTerminal> strToNonTerminal = 
+        new HashMap<String, NonTerminal>();
 
-    ArrayList<Pair<NonTerminal, NonTerminal>> toProcess = new ArrayList<Pair<NonTerminal, NonTerminal>>();
+    HashMap<NonTerminal, Set<String>> first = 
+        new HashMap<NonTerminal, Set<String>>();
+
+    HashMap<NonTerminal, Set<String>> follow = 
+        new HashMap<NonTerminal, Set<String>>();
 
     void run() {
         getInputFromFile("grammer.txt");
@@ -20,7 +23,7 @@ class Main {
         displayFollow();
     }
 
-    
+
     void calculateFirst() {
         for (NonTerminal nt : grammer) {
             calculateFirst(nt);
@@ -77,27 +80,25 @@ class Main {
     }
 
     void calculateFollow() {
-        Set<String> end = new HashSet<String>();
-        end.add("$");
-        follow.put(grammer.get(0), end);
+        ArrayList<Pair<NonTerminal, NonTerminal>> toProcess = 
+            new ArrayList<Pair<NonTerminal, NonTerminal>>();
+
+        fillEnd();
         for (NonTerminal nt : grammer) {
             for (String production : nt.productions) {
-                calculateFollow(nt, production);
+                toProcess.addAll(calculateFollow(nt, production));
             }
         }
-
-        for (int i = 0; i < toProcess.size(); i++) {
-            NonTerminal to = toProcess.get(i).first;
-            NonTerminal from = toProcess.get(i).second;
-
-            Set<String> combined = follow.get(to);
-            combined.addAll(follow.get(from));
-            follow.put(to, combined);
-        }
-
+        process(toProcess);        
     }
 
-    void calculateFollow(NonTerminal parentNt, String production) {
+    /* Update follow of all Non Terminals in the production */
+    ArrayList<Pair<NonTerminal, NonTerminal>> 
+        calculateFollow(NonTerminal parentNt, String production) {
+
+        ArrayList<Pair<NonTerminal, NonTerminal>> toProcess 
+            = new ArrayList<Pair<NonTerminal, NonTerminal>>();
+
         for (int i = 0; i < production.length(); i++) {
             char symbol = production.charAt(i);
             if (!isTerminal(symbol)) {
@@ -112,17 +113,37 @@ class Main {
                     currFollow.remove("epsilon");
                 }
 
-                if (follow.get(currNonTerminal) == null) {
-                   follow.put(currNonTerminal, currFollow);
-                } else {
-                   Set<String> combined = follow.get(currNonTerminal);
-                   combined.addAll(currFollow);
-                   follow.put(currNonTerminal, combined);
-                }
+                addToFollow(currNonTerminal, currFollow);
+
                 if (nullable) {
-                    toProcess.add(new Pair<NonTerminal, NonTerminal>(currNonTerminal, parentNt));
+                    toProcess.add(new Pair<NonTerminal, NonTerminal>
+                            (currNonTerminal, parentNt));
                 }
             }
+        }
+        return toProcess;
+    }
+
+    /* Add current follow to the follow of current Non Terminal */
+    void addToFollow(NonTerminal currNonTerminal, Set<String> currFollow) {
+        if (follow.get(currNonTerminal) == null) {
+            follow.put(currNonTerminal, currFollow);
+        } else {
+            Set<String> combined = follow.get(currNonTerminal);
+            combined.addAll(currFollow);
+            follow.put(currNonTerminal, combined);
+        }
+    }
+
+    /* Add follow of second to follow of first */
+    void process(ArrayList<Pair<NonTerminal, NonTerminal>> toProcess) {
+        for (int i = 0; i < toProcess.size(); i++) {
+            NonTerminal to = toProcess.get(i).first;
+            NonTerminal from = toProcess.get(i).second;
+
+            Set<String> combined = follow.get(to);
+            combined.addAll(follow.get(from));
+            follow.put(to, combined);
         }
     }
 
@@ -132,6 +153,13 @@ class Main {
         for (NonTerminal nt : grammer) {
             System.out.println(nt.name + " " + follow.get(nt));
         }
+    }
+
+    /* Add $ to the follow of first production */
+    void fillEnd() {
+        Set<String> end = new HashSet<String>();
+        end.add("$");
+        follow.put(grammer.get(0), end);
     }
 
     boolean isTerminal(char symbol) {
