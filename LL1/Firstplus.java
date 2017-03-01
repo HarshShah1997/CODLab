@@ -1,9 +1,9 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class Firstplus {
 
-    ArrayList<NonTerminal> grammer = new ArrayList<NonTerminal>();
+    ArrayList<NonTerminal> grammer;
 
     HashMap<String, NonTerminal> strToNonTerminal = 
         new HashMap<String, NonTerminal>();
@@ -17,9 +17,19 @@ class Main {
     HashMap<Pair<NonTerminal, String>, Set<String>> firstplus =
         new HashMap<Pair<NonTerminal, String>, Set<String>>();
 
+    Firstplus() {
+        ;
+    }
+
+    Firstplus(ArrayList<NonTerminal> inputGrammer) {
+        grammer = inputGrammer;
+    }
+
     void run() {
         try {
-            grammer = Helper.getGrammer(new InputStreamReader(System.in));
+            if (grammer == null) {
+                grammer = Helper.getGrammer(new InputStreamReader(System.in));
+            }
             fillStrToNonTerminal();
 
             calculateFirst();
@@ -238,6 +248,6 @@ class Main {
     }
 
     public static void main(String[] args) {
-        new Main().run();
+        new Firstplus().run();
     }
 }
