@@ -5,7 +5,7 @@ class Firstplus {
 
     ArrayList<NonTerminal> grammer;
 
-    HashMap<String, NonTerminal> strToNonTerminal = 
+    HashMap<String, NonTerminal> mapGrammer = 
         new HashMap<String, NonTerminal>();
 
     HashMap<NonTerminal, Set<String>> first = 
@@ -30,7 +30,9 @@ class Firstplus {
             if (grammer == null) {
                 grammer = Helper.getGrammer(new InputStreamReader(System.in));
             }
-            fillStrToNonTerminal();
+            mapGrammer = Helper.map(grammer);
+
+            Helper.displayGrammer(grammer);
 
             calculateFirst();
             displayFirst();
@@ -77,7 +79,7 @@ class Firstplus {
                 currFirst.add("" + currSymbol);
                 break;
             } else {
-                NonTerminal nt = strToNonTerminal.get(""+currSymbol);
+                NonTerminal nt = mapGrammer.get(""+currSymbol);
                 Set<String> result = calculateFirst(nt);
                 currFirst.addAll(result);
                 if (currFirst.contains("epsilon")) {
@@ -126,7 +128,7 @@ class Firstplus {
                 if (!isTerminal(symbol)) {
                     String rem = production.substring(i+1);
                     Set<String> currFollow = calculateFirst(rem);
-                    NonTerminal currNonTerminal = strToNonTerminal.get("" + symbol);
+                    NonTerminal currNonTerminal = mapGrammer.get("" + symbol);
 
                     boolean nullable = false;
 
@@ -238,12 +240,6 @@ class Firstplus {
             return true;
         } else {
             return false;
-        }
-    }
-
-    void fillStrToNonTerminal() {
-        for (NonTerminal nt : grammer) {
-            strToNonTerminal.put(nt.name, nt);
         }
     }
 

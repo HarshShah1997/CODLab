@@ -16,7 +16,6 @@ public class Helper {
                     continue;
                 }
                 String[] split = input.split("\\s*->\\s*");
-                System.out.println(Arrays.toString(split));
 
                 if (split.length == 1) {
                     String production = (split[0]).split("\\s*\\Q|\\E\\s*")[1];
@@ -37,6 +36,35 @@ public class Helper {
             
         }
         return grammer;
+    }
+
+    public static HashMap<String, NonTerminal> map(ArrayList<NonTerminal> grammer) {
+        HashMap<String, NonTerminal> mapGrammer = 
+            new HashMap<String, NonTerminal>();
+        for (NonTerminal nt : grammer) {
+            mapGrammer.put(nt.name, nt);
+        }
+        return mapGrammer;
+    }
+
+    public static void displayGrammer(ArrayList<NonTerminal> grammer) {
+        System.out.println("");
+        System.out.println("GRAMMER");
+        for (NonTerminal nt : grammer) {
+            System.out.print(nt.name + " -> ");            
+            for (int i = 0; i < nt.productions.size(); i++) {
+                if (i != 0) {
+                    System.out.print("  |  ");
+                }
+                System.out.println(nt.productions.get(i));
+            }
+            if (nt.nullable) {
+                if (nt.productions.size() != 0) {
+                    System.out.print("  |  ");
+                }
+                System.out.println("epsilon");
+            }
+        }
     }
 }
 
