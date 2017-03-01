@@ -17,41 +17,37 @@ class Firstplus {
     HashMap<Pair<NonTerminal, String>, Set<String>> firstplus =
         new HashMap<Pair<NonTerminal, String>, Set<String>>();
 
-    Firstplus() {
+    public Firstplus() {
         ;
     }
 
-    Firstplus(ArrayList<NonTerminal> inputGrammer) {
+    public Firstplus(ArrayList<NonTerminal> inputGrammer) {
         grammer = inputGrammer;
     }
 
     void run() {
-        try {
-            if (grammer == null) {
-                grammer = Helper.getGrammer(new InputStreamReader(System.in));
-            }
-            mapGrammer = Helper.map(grammer);
-
-            Helper.displayGrammer(grammer);
-
-            calculateFirst();
-            displayFirst();
-
-            calculateFollow();
-            displayFollow();
-
-            calculateFirstplus();
-            displayFirstplus();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            System.exit(1);
+        if (grammer == null) {
+            grammer = Helper.getGrammer(new InputStreamReader(System.in));
         }
+        mapGrammer = Helper.map(grammer);
+
+        Helper.displayGrammer(grammer);
+
+        calculateFirst();
+        displayFirst();
+
+        calculateFollow();
+        displayFollow();
+
+        calculateFirstplus();
+        displayFirstplus();
     }
 
-    void calculateFirst() {
+    HashMap<NonTerminal, Set<String>> calculateFirst() {
         for (NonTerminal nt : grammer) {
             calculateFirst(nt);
         }
+        return first;
     }
 
     Set<String> calculateFirst(NonTerminal nt) {
@@ -103,7 +99,7 @@ class Firstplus {
         }
     }
 
-    void calculateFollow() {
+    HashMap<NonTerminal, Set<String>> calculateFollow() {
         ArrayList<Pair<NonTerminal, NonTerminal>> toProcess = 
             new ArrayList<Pair<NonTerminal, NonTerminal>>();
 
@@ -114,6 +110,7 @@ class Firstplus {
             }
         }
         process(toProcess);        
+        return follow;
     }
 
     /* Update follow of all Non Terminals in the production */
