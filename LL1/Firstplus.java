@@ -18,7 +18,7 @@ class Firstplus {
         new HashMap<Pair<NonTerminal, String>, Set<String>>();
 
     public Firstplus() {
-        ;
+        grammer = null;
     }
 
     public Firstplus(ArrayList<NonTerminal> inputGrammer) {
@@ -30,7 +30,6 @@ class Firstplus {
             grammer = Helper.getGrammer(new InputStreamReader(System.in));
         }
         mapGrammer = Helper.map(grammer);
-
         Helper.displayGrammer(grammer);
 
         calculateFirst();
