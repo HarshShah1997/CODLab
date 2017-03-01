@@ -18,15 +18,22 @@ class Main {
         new HashMap<Pair<NonTerminal, String>, Set<String>>();
 
     void run() {
-        getInputFromFile("grammer.txt");
-        calculateFirst();
-        displayFirst();
+        try {
+            grammer = Helper.getGrammer(new InputStreamReader(System.in));
+            fillStrToNonTerminal();
 
-        calculateFollow();
-        displayFollow();
+            calculateFirst();
+            displayFirst();
 
-        calculateFirstplus();
-        displayFirstplus();
+            calculateFollow();
+            displayFollow();
+
+            calculateFirstplus();
+            displayFirstplus();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            System.exit(1);
+        }
     }
 
     void calculateFirst() {
@@ -224,33 +231,9 @@ class Main {
         }
     }
 
-    void getInputFromFile(String filename) {
-        try {
-            String input = "";
-            BufferedReader br = new BufferedReader(new FileReader(filename));
-
-            NonTerminal previous = null;
-            while ((input = br.readLine()) != null) {
-                String[] split = input.split("\\s*->\\s*");
-                System.out.println(Arrays.toString(split));
-
-                if (split.length == 1) {
-                    String production = (split[0]).split("\\s*\\Q|\\E\\s*")[1];
-                    if (production.equals("epsilon")) {
-                        previous.nullable = true;
-                    } else {
-                        previous.productions.add(production);
-                    }
-                } else {
-                    previous = new NonTerminal(split[0]);
-                    previous.productions.add(split[1]);
-                    strToNonTerminal.put(split[0], previous);
-                    grammer.add(previous);
-                }
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            System.exit(1);
+    void fillStrToNonTerminal() {
+        for (NonTerminal nt : grammer) {
+            strToNonTerminal.put(nt.name, nt);
         }
     }
 
