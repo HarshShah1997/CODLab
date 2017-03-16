@@ -1,0 +1,6 @@
+A -> Bc
+  |  d
+B -> Be
+  |  Cd
+C -> Af
+  |  e

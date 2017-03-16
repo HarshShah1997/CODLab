@@ -1,2 +1,10 @@
 A -> Aa
   |  b
+B -> Ba
+  |  b
+  |  c
+C -> c
+  |  d
+D -> Da
+  |  Db
+  |  c

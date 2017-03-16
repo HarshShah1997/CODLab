@@ -4,7 +4,6 @@ import java.util.*;
 class EliminateLeft {
 
     ArrayList<NonTerminal> inputGrammer;
-
     HashMap<String, NonTerminal> mapInputGrammer;
 
     private char symbol = 'Z';
@@ -25,31 +24,39 @@ class EliminateLeft {
         mapInputGrammer = Helper.map(inputGrammer);
         Helper.displayGrammer(inputGrammer);
 
-        eliminateDirect();
+        eliminateLeft();
         Helper.displayGrammer(inputGrammer);
     }
 
     void eliminateLeft() {
         for (int i = 0; i < inputGrammer.size(); i++) {
             NonTerminal nt = inputGrammer.get(i);
-            eliminateLeft(nt, i);
-            //TODO: Eliminate direct recursion
+            for (int j = 0; j < i; j++) {
+                eliminateLeft(nt, i, j);
+            }
+            eliminateDirect(nt);
         }
     }
 
-    void eliminateLeft(NonTerminal parent, int i) {
-        for (String production : parent.productions) {
-            char first = production.charAt(0);
+    void eliminateLeft(NonTerminal parent, int i, int j) {
+        ArrayList<String> toAdd = new ArrayList<String>();
+        ArrayList<String> toRemove = new ArrayList<String>();
+
+        for (String prod : parent.productions) {
+            char first = prod.charAt(0);
             if (!isTerminal(first)) {
                 NonTerminal child = mapInputGrammer.get(""+first);
-                int j = inputGrammer.indexOf(child);
-                if (j < i) {
-                    //ArrayList<String> replaced = replace(production, child);
-                    //parent.productions.remove(production);
-                    //parent.productions.addAll(replaced);
+                int currIndex = inputGrammer.indexOf(child);
+                if (currIndex == j) {
+                    ArrayList<String> newProds = append(child.productions, 
+                            prod.substring(1));
+                    toAdd.addAll(newProds);
+                    toRemove.add(prod);
                 }
             }
         }
+        parent.productions.addAll(toAdd);
+        parent.productions.removeAll(toRemove);
     }
 
     void eliminateDirect() {
@@ -59,60 +66,53 @@ class EliminateLeft {
     }
 
     void eliminateDirect(NonTerminal nt) {
-        ArrayList<Pair<Integer, Integer>> pairs = getPairs(nt);
-        for (Pair<Integer, Integer> pair : pairs) {
-            eliminateDirect(nt, pair);
+        ArrayList<String> nonDirect = getNonDirect(nt);
+        ArrayList<String> direct = getDirect(nt);
+
+        //System.out.println(nt.name);
+        //System.out.println("NonDirect: " + nonDirect);
+        //System.out.println("Direct: " + direct);
+        if (direct.size() == 0) {
+            return;
         }
-        for (Pair<Integer, Integer> pair : pairs) {
-            int index2 = pair.second;
-            nt.productions.remove(index2);
+        NonTerminal newNt = createNonTerminal(getSymbol(nt.name));
+
+        ArrayList<String> orgProd = append(nonDirect, newNt.name);
+        if (nt.nullable) {
+            orgProd.add(newNt.name);
         }
+
+        ArrayList<String> newProd = append(direct, newNt.name);
+        newNt.nullable = true;
+
+        nt.productions = orgProd;
+        newNt.productions = newProd;
     }
 
-    void eliminateDirect(NonTerminal nt, Pair<Integer, Integer> pair) {
-        int index1 = pair.first;
-        int index2 = pair.second;
-
-        String pAAlpha = nt.productions.get(index1);
-        String pBeta = nt.productions.get(index2);
-
-        NonTerminal newNt;
-        String newSym;
-
-        if (taken.get(nt.name) != null) {
-            newSym = taken.get(nt.name);
-            newNt = mapInputGrammer.get(newSym);
-        } else {
-            newSym = getSymbol(nt.name);
-            newNt = createNonTerminal(newSym);
-        }
-
-        newNt.productions.add(pAAlpha.substring(1) + newSym);
-
-        pAAlpha = pBeta + newSym;
-        nt.productions.set(index1, pAAlpha);
-    }
-
-    ArrayList<Pair<Integer, Integer>> getPairs(NonTerminal nt) {
-        ArrayList<Pair<Integer, Integer>> pairs = new ArrayList<Pair<Integer, Integer>>();
-        if (nt.productions.size() > 1) {
-            // TODO: Create all pairs instead of one
-            String p1 = nt.productions.get(0);
-            String p2 = nt.productions.get(1);
-            if ((""+p1.charAt(0)).equals(nt.name)) {
-                pairs.add(new Pair<Integer, Integer>(0, 1));
-            } else if ((""+p2.charAt(0)).equals(nt.name)) {
-                pairs.add(new Pair<Integer, Integer>(1, 0));
+    ArrayList<String> getNonDirect(NonTerminal nt) {
+        ArrayList<String> nonDirect = new ArrayList<String>();
+        for (String prod : nt.productions) {
+            if (!("" + prod.charAt(0)).equals(nt.name)) {
+                nonDirect.add(prod);
             }
         }
-        return pairs;
+        return nonDirect;
+    }
+
+    ArrayList<String> getDirect(NonTerminal nt) {
+        ArrayList<String> direct = new ArrayList<String>();
+        for (String prod : nt.productions) {
+            if (("" + prod.charAt(0)).equals(nt.name)) {
+                direct.add(prod.substring(1));
+            }
+        }
+        return direct;
     }
 
     NonTerminal createNonTerminal(String newSym) {
         NonTerminal newNt = new NonTerminal(newSym);
         inputGrammer.add(newNt);
         mapInputGrammer.put(newSym, newNt);
-        newNt.nullable = true;
         return newNt;
     }
 
@@ -120,6 +120,14 @@ class EliminateLeft {
         String ans = ""+symbol;
         symbol--;
         taken.put(name, ans);
+        return ans;
+    }
+
+    ArrayList<String> append(ArrayList<String> org, String add) {
+        ArrayList<String> ans = new ArrayList<String>();
+        for (String prod : org) {
+            ans.add(prod + add);
+        }
         return ans;
     }
 
