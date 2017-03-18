@@ -25,7 +25,7 @@ class Firstplus {
         grammer = inputGrammer;
     }
 
-    void run() {
+    HashMap<Pair<NonTerminal, String>, Set<String>> run() {
         if (grammer == null) {
             grammer = Helper.getGrammer(new InputStreamReader(System.in));
         }
@@ -40,6 +40,8 @@ class Firstplus {
 
         calculateFirstplus();
         displayFirstplus();
+
+        return firstplus;
     }
 
     HashMap<NonTerminal, Set<String>> calculateFirst() {
@@ -105,6 +107,7 @@ class Firstplus {
         fillEnd();
         for (NonTerminal nt : grammer) {
             for (String production : nt.productions) {
+                //System.out.println("Prod: " + production);
                 toProcess.addAll(calculateFollow(nt, production));
             }
         }

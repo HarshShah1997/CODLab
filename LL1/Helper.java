@@ -19,6 +19,7 @@ public class Helper {
 
                 if (split.length == 1) {
                     String production = (split[0]).split("\\s*\\Q|\\E\\s*")[1];
+                    production = production.trim();
                     if (production.equals("epsilon")) {
                         previous.nullable = true;
                     } else {
@@ -65,6 +66,18 @@ public class Helper {
                 System.out.println("epsilon");
             }
         }
+    }
+
+    public static String getInput() {
+        String input = null;
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader
+                    (System.in));
+            input = br.readLine();
+        } catch (IOException iex) {
+            iex.printStackTrace();
+        }
+        return input;
     }
 }
 

@@ -1,0 +1,6 @@
+S -> Aa
+A -> BD
+B -> b
+  |  epsilon
+D -> d
+  |  epsilon
