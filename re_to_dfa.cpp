@@ -376,7 +376,7 @@ void print_tree(Node *tree)
         int level = q.front().second;
         q.pop();
 
-        cout << level << " " << current -> value  << " " << current -> position << " " << current -> nullable << " ";
+        cout << level << "\t" << current -> value  << "\t" << current -> position << "\t" << current -> nullable << "\t";
         print_set(current -> firstpos);
         cout << " ";
         print_set(current -> lastpos);
