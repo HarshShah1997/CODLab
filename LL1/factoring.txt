@@ -1,0 +1,8 @@
+A -> BCd
+  |  Bef
+  |  BCa
+B -> def
+C -> dE
+  |  dF
+  |  aE
+  |  aB
