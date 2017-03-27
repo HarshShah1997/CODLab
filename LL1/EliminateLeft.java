@@ -17,7 +17,7 @@ class EliminateLeft {
         inputGrammer = grammer;
     }
 
-    void run() {
+    ArrayList<NonTerminal> run() {
         if (inputGrammer == null) {
             inputGrammer = Helper.getGrammer(new InputStreamReader(System.in));
         }
@@ -26,6 +26,7 @@ class EliminateLeft {
 
         eliminateLeft();
         Helper.displayGrammer(inputGrammer);
+        return inputGrammer;
     }
 
     void eliminateLeft() {

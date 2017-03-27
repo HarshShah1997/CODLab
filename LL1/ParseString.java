@@ -126,8 +126,9 @@ class ParseString {
     void checkInput() {
         try {
             if (grammer == null) {
-                grammer = Helper.getGrammer(new FileReader("testGrammer.txt"));
+                grammer = Helper.getGrammer(new FileReader("testGrammer.txt"));                
             }
+            grammer = (new EliminateLeft(grammer).run());
             if (inputString == null) {
                 inputString = Helper.getInput();
             }
