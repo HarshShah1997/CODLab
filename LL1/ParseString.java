@@ -129,6 +129,7 @@ class ParseString {
                 grammer = Helper.getGrammer(new FileReader("testGrammer.txt"));                
             }
             grammer = (new EliminateLeftRecursion(grammer).run());
+            grammer = (new EliminateLeftFactoring(grammer).run());
             if (inputString == null) {
                 inputString = Helper.getInput();
             }

@@ -38,15 +38,12 @@ class EliminateLeftFactoring {
     void eliminateLeftFactoring(NonTerminal nt) {
 
         ArrayList<ArrayList<String>> common = toGroups(nt.productions);
-        //System.out.println(common);
         
         for (ArrayList<String> group : common) {
             if (group.size() == 1) {
                 continue;
             }
             String lcp = findLcp(group);
-            //System.out.println(group + " -> " + lcp);
-            //
             nt.productions.removeAll(group);
             NonTerminal newnt = createNonTerminal(getSymbol());
             nt.productions.add(lcp + newnt.name);
