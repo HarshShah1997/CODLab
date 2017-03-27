@@ -82,12 +82,15 @@ class EliminateLeftFactoring {
         for (int i = 1; i < group.size(); i++) {
             String prod = group.get(i);
 
-            for (int j = 0; j < lcp.length(); j++) {
+            int len = lcp.length() < prod.length() ? lcp.length() : prod.length();
+            int j = 0;
+            for (j = 0; j < len; j++) {
                 if (prod.charAt(j) != lcp.charAt(j)) {
-                    lcp = lcp.substring(0, j);
                     break;
                 }
             }
+            lcp = lcp.substring(0, j);
+
         }
         return lcp;
     }

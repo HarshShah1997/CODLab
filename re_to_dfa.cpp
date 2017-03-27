@@ -60,6 +60,8 @@ int main()
     string input;
     cin >> input;
 
+    input += "#";
+
     input = to_postfix(input);
     cout << "Postfix: " << input << endl;
 
