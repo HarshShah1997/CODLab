@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.*;
 
-class EliminateLeft {
+class EliminateLeftRecursion {
 
     ArrayList<NonTerminal> inputGrammer;
     HashMap<String, NonTerminal> mapInputGrammer;
@@ -9,11 +9,11 @@ class EliminateLeft {
     private char symbol = 'Z';
     private HashMap<String, String> taken = new HashMap<String, String>();
 
-    public EliminateLeft() {
+    public EliminateLeftRecursion() {
         inputGrammer = null;
     }
 
-    public EliminateLeft(ArrayList<NonTerminal> grammer) {
+    public EliminateLeftRecursion(ArrayList<NonTerminal> grammer) {
         inputGrammer = grammer;
     }
 
@@ -141,7 +141,7 @@ class EliminateLeft {
     }
 
     public static void main(String[] args) {
-        new EliminateLeft().run();
+        new EliminateLeftRecursion().run();
     }
 }
 
