@@ -45,8 +45,7 @@ void compute_followpos(Node *tree, map< int, set<int> > &followpos);
 void find_for_star(Node *tree, map< int, set<int> > &followpos);
 void find_for_cat(Node *tree, map< int, set<int> > &followpos);
 void print_map(map<int, set<int> > &fp);
-map< set<int>, vector< set<int> > > create_dfa(Node *tree, vector< set<int> > &positions, 
-        map< int, set<int> > &followpos, vector<char> &symbols);
+map< set<int>, vector< set<int> > > create_dfa(Node *tree, vector< set<int> > &positions, map< int, set<int> > &followpos, vector<char> &symbols);
 vector< set<int> > find_positions(Node *tree, vector<char> &symbols);
 void find_pos_symbol(Node *tree, char symbol, set<int> &symbol_position);
 void print_vector(vector< set<int> > &v, vector<char> &symbols);
@@ -54,15 +53,19 @@ set<int> union_all(set<int> intersected, map< int, set<int> > &followpos);
 void print_dfa(map< set<int>, vector< set<int> > > &dfa, vector<char> &symbols);
 vector<char> find_symbols(string input);
 string to_postfix(string input);
+string add_conc(string input);
+bool is_terminal(char symbol);
 
 int main()
 {
     string input;
     cin >> input;
 
-    input += "#";
+    input = add_conc(input);
+    cout << "Input: " << input << endl;
 
     input = to_postfix(input);
+    input += "#.";
     cout << "Postfix: " << input << endl;
 
     map< int, set<int> > followpos;
@@ -91,31 +94,55 @@ int main()
     return 0;
 }
 
+string add_conc(string input) 
+{
+    string ans = "";
+    ans += input[0];
+    for (int i = 1; i < input.length(); i++) {
+        if (is_terminal(input[i]) || input[i] == '(' || input[i] == '#') {
+            if (is_terminal(input[i-1]) || input[i-1] == ')' || input[i-1] == '*') {
+                ans += '.';
+            }
+        }
+        ans += input[i];
+    }
+    return ans;
+}
+
 string to_postfix(string input)
 {
     string ans = "";
     stack<char> s;
 
     for (int i = 0; i < input.length(); i++) {
-        if (input[i] == '.' || input[i] == '|' || input[i] == '*') {
-            if (!s.empty()) {
+        if (input[i] == '(') {
+            s.push(input[i]);
+        } else if (input[i] == '*') {
+            while (!s.empty() && s.top() == '*') {
                 ans += s.top();
                 s.pop();
             }
             s.push(input[i]);
         } else if (input[i] == ')') {
-            if (!s.empty()) {
+            while (!s.empty() && s.top() != '(') {
                 ans += s.top();
                 s.pop();
             }
-        } else if (input[i] != '(') {
-            if (i != 0 && input[i - 1] != '|' && input[i-1] != '(') {
-                if (!s.empty()) {
-                    ans += s.top();
-                    s.pop();
-                }
-                s.push('.');
+            s.pop();
+
+        } else if (input[i] == '.') {
+            while (!s.empty() && (s.top() == '*' || s.top() == '.')) {
+                ans += s.top();
+                s.pop();
             }
+            s.push(input[i]);
+        } else if (input[i] == '|') {
+            while (!s.empty() && (s.top() == '*' || s.top() == '.' || s.top() == '|')) {
+                ans += s.top();
+                s.pop();
+            }
+            s.push(input[i]);
+        } else {
             ans += input[i];
         }
     }
@@ -282,7 +309,7 @@ vector<char> find_symbols(string input)
     vector<char> symbols;
     map<char, bool> visited;
     for (int i = 0; i < input.length(); i++) {
-        if ((input[i] >= 'a' && input[i] <= 'z') || (input[i] >= 'A' && input[i] <= 'Z')) {
+        if (is_terminal(input[i])) {
             if (visited.find(input[i]) == visited.end()) {
                 symbols.push_back(input[i]);
                 visited[input[i]] = true;
@@ -437,6 +464,14 @@ void print_vector(vector< set<int> > &v, vector<char> &symbols)
         cout << symbols[i] << " ";
         print_set(v[i]);
         cout << endl;
+    }
+}
+
+bool is_terminal(char symbol) {
+    if ((symbol >= 'a' && symbol <= 'z') || (symbol >= 'A' && symbol <= 'Z')) {
+        return true;
+    } else {
+        return false;
     }
 }
 
