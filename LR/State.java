@@ -40,5 +40,10 @@ class State {
         State two = (State)second;
         return this.productions.equals(two.productions);
     }
+
+    @Override
+    public int hashCode() {
+        return this.productions.hashCode();
+    }
 }
 

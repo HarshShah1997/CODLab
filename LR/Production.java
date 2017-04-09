@@ -21,4 +21,9 @@ class Production {
         Production two = (Production)second;
         return (this.head.equals(two.head) && this.body.equals(two.body));
     }
+
+    @Override
+    public int hashCode() {
+        return 31 * head.name.hashCode() + body.hashCode();
+    }
 }

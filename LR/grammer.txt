@@ -1,10 +1,10 @@
+S -> AA
+A -> aA
+  |  b
+
 E -> E+T
   |  T
 T -> i
   |  (E)
-
-S -> AA
-A -> aA
-  |  b
 
 

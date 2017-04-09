@@ -86,5 +86,16 @@ public class Helper {
         }
     }
 
+    public static boolean isTerminal(String symbol) {
+        return isTerminal(symbol.charAt(0));
+    }
+
+    public static boolean isTerminal(char symbol) {
+        if (symbol < 'A' || symbol > 'Z') {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
 

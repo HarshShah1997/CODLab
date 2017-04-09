@@ -100,7 +100,7 @@ class CreateAutomaton {
         }
         if (pos < body.length() - 1) {
             String nextSym = "" + body.charAt(pos+1);
-            if (!isTerminal(nextSym)) {
+            if (!Helper.isTerminal(nextSym)) {
                 NonTerminal nt = mapGrammer.get(nextSym);
                 for (String prod : nt.productions) {
                     Production newprod = new Production(nt, augment(prod));
@@ -135,19 +135,6 @@ class CreateAutomaton {
         } catch (Exception ex) {
             ex.printStackTrace();
             System.exit(1);
-        }
-    }
-
-
-    boolean isTerminal(String symbol) {
-        return isTerminal(symbol.charAt(0));
-    }
-
-    boolean isTerminal(char symbol) {
-        if (symbol < 'A' || symbol > 'Z') {
-            return true;
-        } else {
-            return false;
         }
     }
 
