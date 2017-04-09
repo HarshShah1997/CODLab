@@ -79,5 +79,12 @@ public class Helper {
         }
         return input;
     }
+
+    public static void displayStates(ArrayList<State> states) {
+        for (State state : states) {
+            System.out.println(state);
+        }
+    }
+
 }
 

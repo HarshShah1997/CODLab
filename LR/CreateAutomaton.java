@@ -16,15 +16,13 @@ class CreateAutomaton {
         grammer = inpGrammer;
     }
 
-    void run() {
+    ArrayList<State> run() {
         checkInput();
 
         State initialState = createInitialState();
-        //states.add(initialState);
-        //System.out.println(initialState);
 
         createTransitions(initialState);
-
+        return states;
     }
 
     State createInitialState() {
@@ -44,15 +42,15 @@ class CreateAutomaton {
         if (states.indexOf(state) != -1) {
             return;
         }
-        System.out.println(state);
+        //System.out.println(state);
         ArrayList<String> transitionSymbols = state.getTransitionSymbols();
-        System.out.println(transitionSymbols);
+        //System.out.println(transitionSymbols);
 
         states.add(state);
 
         for (String symbol : transitionSymbols) {
             State newstate = findTransition(state, symbol);
-            System.out.println(symbol);
+            //System.out.println(symbol);
             //System.out.println(newstate);
             //System.out.println("");
             createTransitions(newstate);
@@ -133,12 +131,13 @@ class CreateAutomaton {
                 grammer = Helper.getGrammer(new FileReader("grammer.txt")); 
             }
             mapGrammer = Helper.map(grammer);
-            Helper.displayGrammer(grammer);
+            //Helper.displayGrammer(grammer);
         } catch (Exception ex) {
             ex.printStackTrace();
             System.exit(1);
         }
     }
+
 
     boolean isTerminal(String symbol) {
         return isTerminal(symbol.charAt(0));
@@ -153,7 +152,8 @@ class CreateAutomaton {
     }
 
     public static void main(String[] args) {
-        new CreateAutomaton().run();
+        ArrayList<State> automaton = new CreateAutomaton().run();
+        Helper.displayStates(automaton);
     }
 }
 
