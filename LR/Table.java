@@ -1,12 +1,13 @@
 import java.io.*;
 import java.util.*;
 
-class Table {
+abstract class Table {
 
     ArrayList<NonTerminal> grammer;
     HashMap<String,NonTerminal> mapGrammer;
 
     ArrayList<State> automaton;
+    ArrayList<Production> allProductions = new ArrayList<Production>();
 
     HashMap<Pair<Integer,String>,String> table =
         new HashMap<Pair<Integer,String>, String>();
@@ -19,17 +20,11 @@ class Table {
         grammer = inpGrammer;
     }
 
-    void buildTable() {
-        checkInput();
-        automaton = new CreateAutomaton(grammer).run();
-        Helper.displayStates(automaton);
-        fillShift();
-    }
-        
+    abstract void buildTable();
+
     void fillShift() {
         HashMap<State,Boolean> visited = new HashMap<State,Boolean>();
         fillShift(automaton.get(0), visited);
-        System.out.println(table);
     }
 
     void fillShift(State currentState, HashMap<State,Boolean> visited) {
@@ -55,22 +50,34 @@ class Table {
         }
     }
                 
+    abstract void fillReduce();
 
-    void fillReduce() { ; }
-
-    void checkInput() {
-        try {
-            if (grammer == null) {
-                grammer = Helper.getGrammer(new FileReader("grammer.txt")); 
+    void fillProductions() {
+        for (NonTerminal nt : grammer) {
+            for (String body : nt.productions) {
+                Production prod = new Production(nt, body);
+                allProductions.add(prod);
             }
-            mapGrammer = Helper.map(grammer);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            System.exit(1);
         }
     }
 
-    public static void main(String[] args) {
-        new Table().buildTable();
+    void printTable() {
+        for (int i = 0; i < automaton.size(); i++) {
+            System.out.print(i + " ");
+
+            State currentState = automaton.get(i);
+            ArrayList<String> first = Helper.getTerminals(grammer);
+            first.addAll(mapGrammer.keySet());
+            for (String entry : first) {
+                Pair<Integer,String> key = new Pair<Integer,String>(i, entry);
+                System.out.print("(" + entry + ",");
+                if (table.get(key) == null) {
+                    System.out.print(" ) ");
+                } else {
+                    System.out.print(table.get(key) + ") ");
+                }
+            }
+            System.out.println("");
+        }
     }
 }

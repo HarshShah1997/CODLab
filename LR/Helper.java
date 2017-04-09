@@ -97,5 +97,27 @@ public class Helper {
             return false;
         }
     }
+
+    public static ArrayList<String> getTerminals(ArrayList<NonTerminal> grammer) {
+        ArrayList<String> terminals = new ArrayList<String>();
+        for (NonTerminal nt : grammer) {
+            for (String production : nt.productions) {
+                terminals.addAll(getTerminals(production));
+            }
+        }
+        terminals.add("$");
+        return terminals;
+    }
+
+    public static ArrayList<String> getTerminals(String string) {
+        ArrayList<String> ans = new ArrayList<String>();
+        for (int i = 0; i < string.length(); i++) {
+            if (isTerminal(string.charAt(i))) {
+                ans.add("" + string.charAt(i));
+            }
+        }
+        return ans;
+    }
+
 }
 
