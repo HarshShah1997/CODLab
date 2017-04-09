@@ -6,6 +6,8 @@ class CreateAutomaton {
     ArrayList<NonTerminal> grammer;
     HashMap<String,NonTerminal> mapGrammer = new HashMap<String,NonTerminal>();
 
+    ArrayList<State> states = new ArrayList<State>();
+
     public CreateAutomaton() {
         grammer = null;
     }
@@ -18,13 +20,17 @@ class CreateAutomaton {
         checkInput();
 
         State initialState = createInitialState();
-        System.out.println(initialState);
+        //states.add(initialState);
+        //System.out.println(initialState);
+
+        createTransitions(initialState);
 
     }
 
     State createInitialState() {
         NonTerminal head = new NonTerminal("Z");
         String body = augment(grammer.get(0).name);
+        body += "$";
         Production production = new Production(head, body);
 
         State initialState = new State();
@@ -34,6 +40,52 @@ class CreateAutomaton {
         return initialState;
     }
 
+    void createTransitions(State state) {
+        if (states.indexOf(state) != -1) {
+            return;
+        }
+        System.out.println(state);
+        ArrayList<String> transitionSymbols = state.getTransitionSymbols();
+        System.out.println(transitionSymbols);
+
+        states.add(state);
+
+        for (String symbol : transitionSymbols) {
+            State newstate = findTransition(state, symbol);
+            System.out.println(symbol);
+            //System.out.println(newstate);
+            //System.out.println("");
+            createTransitions(newstate);
+        }
+    }
+
+    State findTransition(State org, String symbol) {        
+        ArrayList<Production> allProd = new ArrayList<Production>();
+        char sym = symbol.charAt(0);
+        for (Production prod : org.productions) {
+            int pos = prod.body.indexOf(".");
+            if (pos < prod.body.length() - 1 && sym == prod.body.charAt(pos+1)) {
+                Production newProd = shift(prod);
+                allProd.add(newProd);
+                allProd.addAll(closure(newProd));
+            }
+        }
+        State nextState = new State(allProd);
+        org.transitions.put(symbol, nextState);
+        return nextState;
+    }
+
+    Production shift(Production prev) {
+        StringBuilder sb = new StringBuilder(prev.body);
+        int pos = prev.body.indexOf(".");
+        char temp = sb.charAt(pos+1);
+        sb.setCharAt(pos+1, '.');
+        sb.setCharAt(pos, temp);
+
+        String newBody = sb.toString();
+        return new Production(prev.head, newBody);
+    }
+
     ArrayList<Production> closure(Production org) {
         HashMap<String,Boolean> taken = new HashMap<String,Boolean>();
         return closure(org, taken);
@@ -41,7 +93,6 @@ class CreateAutomaton {
         
     ArrayList<Production> closure(Production org, HashMap<String,Boolean> taken) {        
         ArrayList<Production> ans = new ArrayList<Production>();
-        //ans.add(org);
         taken.put(org.body, true);
 
         String body = org.body;

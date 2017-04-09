@@ -15,4 +15,10 @@ class Production {
         String disp = head.name + " -> " + body;
         return disp;
     }
+
+    @Override
+    public boolean equals(Object second) {
+        Production two = (Production)second;
+        return (this.head.equals(two.head) && this.body.equals(two.body));
+    }
 }
