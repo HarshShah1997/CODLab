@@ -3,17 +3,22 @@ import java.io.*;
 
 class LR0Table extends Table {
 
-    void buildTable() {
+    public LR0Table() {
+        super();
+    }
+
+    public LR0Table(ArrayList<NonTerminal> inpGrammer) {
+        super(inpGrammer);
+    }
+
+    HashMap<Pair<Integer,String>,String> buildTable() {
         checkInput();
-        automaton = new CreateAutomaton(grammer).run();
-        Helper.displayStates(automaton);
-
-        fillProductions();
-
+        
         fillShift();
         fillReduce();
 
         printTable();
+        return table;
     }
 
     void checkInput() {
@@ -22,6 +27,12 @@ class LR0Table extends Table {
                 grammer = Helper.getGrammer(new FileReader("grammer.txt")); 
             }
             mapGrammer = Helper.map(grammer);
+            if (automaton == null) {
+                automaton = new CreateAutomaton(grammer).run();
+            }
+            Helper.displayStates(automaton);
+            allProductions = Helper.fillProductions(grammer);
+
         } catch (Exception ex) {
             ex.printStackTrace();
             System.exit(1);

@@ -20,7 +20,7 @@ abstract class Table {
         grammer = inpGrammer;
     }
 
-    abstract void buildTable();
+    abstract HashMap<Pair<Integer,String>,String> buildTable();
 
     void fillShift() {
         HashMap<State,Boolean> visited = new HashMap<State,Boolean>();
@@ -51,15 +51,6 @@ abstract class Table {
     }
                 
     abstract void fillReduce();
-
-    void fillProductions() {
-        for (NonTerminal nt : grammer) {
-            for (String body : nt.productions) {
-                Production prod = new Production(nt, body);
-                allProductions.add(prod);
-            }
-        }
-    }
 
     void printTable() {
         for (int i = 0; i < automaton.size(); i++) {

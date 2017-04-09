@@ -119,5 +119,15 @@ public class Helper {
         return ans;
     }
 
+    public static ArrayList<Production> fillProductions(ArrayList<NonTerminal> grammer) {
+        ArrayList<Production> allProductions = new ArrayList<Production>();
+        for (NonTerminal nt : grammer) {
+            for (String body : nt.productions) {
+                Production prod = new Production(nt, body);
+                allProductions.add(prod);
+            }
+        }
+        return allProductions;
+    }
 }
 
