@@ -1,3 +1,2 @@
-S -> AA
-A -> aA
-  |  b
+S -> aSbS
+  |  a

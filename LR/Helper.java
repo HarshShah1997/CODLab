@@ -99,14 +99,15 @@ public class Helper {
     }
 
     public static ArrayList<String> getTerminals(ArrayList<NonTerminal> grammer) {
-        ArrayList<String> terminals = new ArrayList<String>();
+        Set<String> terminals = new HashSet<String>();
         for (NonTerminal nt : grammer) {
             for (String production : nt.productions) {
                 terminals.addAll(getTerminals(production));
             }
         }
         terminals.add("$");
-        return terminals;
+        ArrayList<String> ans = new ArrayList<String>(terminals);
+        return ans;
     }
 
     public static ArrayList<String> getTerminals(String string) {

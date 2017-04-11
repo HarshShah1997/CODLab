@@ -63,7 +63,7 @@ abstract class Table {
                 Pair<Integer,String> key = new Pair<Integer,String>(i, entry);
                 System.out.print("(" + entry + ",");
                 if (table.get(key) == null) {
-                    System.out.print(" ) ");
+                    System.out.print("  ) ");
                 } else {
                     System.out.print(table.get(key) + ") ");
                 }
