@@ -32,7 +32,7 @@ class ParseString {
 
     void run() {
         checkInput();
-        table = (new LR0Table(grammer)).buildTable();
+        table = (new LR1Table(grammer)).buildTable();
 
         boolean result = parse();
         System.out.println(result);
@@ -67,7 +67,7 @@ class ParseString {
             if (value.charAt(0) == 'S') {
                 stack.push(""+inputString.charAt(pointer));
                 pointer++;
-                stack.push(""+value.charAt(1));
+                stack.push(value.substring(1));
             } else if (value.charAt(0) == 'R') {
                 int index = value.charAt(1) - '0';
                 Production reduce = allProductions.get(index);

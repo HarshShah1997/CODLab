@@ -43,7 +43,6 @@ class LR1Table extends Table {
 
     void fillReduce() {
         Firstplus fp = new Firstplus(grammer);
-        fp.run();
         follow = fp.getFollow();
         //System.out.println(follow);
         for (State state : automaton) {
@@ -79,7 +78,7 @@ class LR1Table extends Table {
                     (stateIndex, symbol);
                 String value = "R" + prodIndex;
                 if (table.get(key) != null) {
-                    System.out.println("Conflict");
+                    //System.out.println("Conflict");
                 } else {
                     table.put(key, value);
                 }

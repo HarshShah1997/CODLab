@@ -26,6 +26,12 @@ class Firstplus {
     }
 
     HashMap<NonTerminal, Set<String>> getFollow() {
+        if (grammer == null) {
+            grammer = Helper.getGrammer(new InputStreamReader(System.in));
+        }
+        mapGrammer = Helper.map(grammer);
+        calculateFollow();
+        displayFollow();
         return follow;
     }
 
