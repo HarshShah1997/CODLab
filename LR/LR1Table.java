@@ -57,9 +57,6 @@ class LR1Table extends Table {
         }
         for (Production production : state.productions) {
             String body = production.body;
-            if (body.charAt(body.length() - 1) != '.') {
-                System.out.println("S-R conflict");
-            }
             fillReduce(state, production);
         }
     }
@@ -81,7 +78,11 @@ class LR1Table extends Table {
                 Pair<Integer,String> key = new Pair<Integer,String>
                     (stateIndex, symbol);
                 String value = "R" + prodIndex;
-                table.put(key, value);
+                if (table.get(key) != null) {
+                    System.out.println("Conflict");
+                } else {
+                    table.put(key, value);
+                }
             }
         }
     }
